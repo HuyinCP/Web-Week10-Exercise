@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Spring Security Demo</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        .admin-card {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/home}">
+                <i class="bi bi-shield-lock"></i> Spring Security Demo
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/admin/}">
+                            <i class="bi bi-gear"></i> Admin Panel
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            <span th:text="${user.username}">Admin</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/user/profile}">
+                                <i class="bi bi-person"></i> Profile
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/logout}">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- Admin Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card admin-card">
+                    <div class="card-body text-center">
+                        <h2 class="card-title mb-3">
+                            <i class="bi bi-gear"></i> Administrator Panel
+                        </h2>
+                        <p class="card-text mb-3">
+                            Welcome, <span th:text="${fullName}">Admin User</span>! 
+                            You have full administrative privileges.
+                        </p>
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-shield-check"></i> ROLE_ADMIN
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Features -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-people text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">User Management</h5>
+                        <p class="card-text">
+                            Manage all users in the system, view their roles and permissions.
+                        </p>
+                        <a th:href="@{/admin/users}" class="btn btn-primary">
+                            <i class="bi bi-people"></i> Manage Users
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-gear text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">System Settings</h5>
+                        <p class="card-text">
+                            Configure system-wide settings and security parameters.
+                        </p>
+                        <a th:href="@{/admin/settings}" class="btn btn-success">
+                            <i class="bi bi-gear"></i> Settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-database text-info" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Database Console</h5>
+                        <p class="card-text">
+                            Access the H2 database console for direct database management.
+                        </p>
+                        <a href="/h2-console" target="_blank" class="btn btn-info">
+                            <i class="bi bi-database"></i> H2 Console
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Information -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle"></i> Admin Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Username:</strong></td>
+                                <td th:text="${user.username}">admin</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email:</strong></td>
+                                <td th:text="${user.email}">admin@example.com</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Full Name:</strong></td>
+                                <td th:text="${fullName}">Admin User</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Role:</strong></td>
+                                <td><span class="badge bg-danger">ADMIN</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-shield-check"></i> Admin Privileges
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                Full system access
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                User management
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                Role assignment
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                System configuration
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                Database access
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">
+                <i class="bi bi-code-slash"></i> 
+                Spring Security 6 Demo with Spring Boot, JPA, H2 & Thymeleaf
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

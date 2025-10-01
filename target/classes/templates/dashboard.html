@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Spring Security Demo</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .role-badge {
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/home}">
+                <i class="bi bi-shield-lock"></i> Spring Security Demo
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/dashboard}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" sec:authorize="hasRole('USER')">
+                        <a class="nav-link" th:href="@{/user/}">
+                            <i class="bi bi-person"></i> User Area
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" sec:authorize="hasRole('MODERATOR')">
+                        <a class="nav-link" th:href="@{/moderator/}">
+                            <i class="bi bi-shield-check"></i> Moderator
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link" th:href="@{/admin/}">
+                            <i class="bi bi-gear"></i> Admin
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            <span th:text="${user.username}">User</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/user/profile}">
+                                <i class="bi bi-person"></i> Profile
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/logout}">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- Welcome Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <h2 class="card-title mb-3">
+                            <i class="bi bi-person-circle"></i> Welcome, <span th:text="${fullName}">User</span>!
+                        </h2>
+                        <p class="card-text mb-3">
+                            You are successfully logged in to the Spring Security Demo application.
+                        </p>
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                            <span th:each="role : ${roles}" 
+                                  th:text="${role.authority}" 
+                                  class="badge bg-light text-dark role-badge">
+                                ROLE_USER
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Information -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person"></i> User Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Username:</strong></td>
+                                <td th:text="${user.username}">user</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email:</strong></td>
+                                <td th:text="${user.email}">user@example.com</td>
+                            </tr>
+                            <tr>
+                                <td><strong>First Name:</strong></td>
+                                <td th:text="${user.firstName}">John</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Last Name:</strong></td>
+                                <td th:text="${user.lastName}">Doe</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status:</strong></td>
+                                <td>
+                                    <span th:if="${user.enabled}" class="badge bg-success">Active</span>
+                                    <span th:unless="${user.enabled}" class="badge bg-danger">Inactive</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-shield-check"></i> Security Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <h6>Your Roles:</h6>
+                            <div th:each="role : ${roles}" class="mb-2">
+                                <span th:text="${role.authority}" 
+                                      class="badge bg-primary me-1">
+                                    ROLE_USER
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <h6>Accessible Areas:</h6>
+                            <div class="d-flex flex-wrap gap-1">
+                                <span class="badge bg-success">Dashboard</span>
+                                <span class="badge bg-success">User Profile</span>
+                                <span sec:authorize="hasRole('MODERATOR')" class="badge bg-warning">Moderator Panel</span>
+                                <span sec:authorize="hasRole('ADMIN')" class="badge bg-danger">Admin Panel</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-lightning"></i> Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <a th:href="@{/user/profile}" class="btn btn-outline-primary w-100">
+                                    <i class="bi bi-person"></i><br>
+                                    <small>View Profile</small>
+                                </a>
+                            </div>
+                            
+                            <div class="col-md-3" sec:authorize="hasRole('USER')">
+                                <a th:href="@{/user/}" class="btn btn-outline-success w-100">
+                                    <i class="bi bi-person-workspace"></i><br>
+                                    <small>User Area</small>
+                                </a>
+                            </div>
+                            
+                            <div class="col-md-3" sec:authorize="hasRole('MODERATOR')">
+                                <a th:href="@{/moderator/}" class="btn btn-outline-warning w-100">
+                                    <i class="bi bi-shield-check"></i><br>
+                                    <small>Moderator Panel</small>
+                                </a>
+                            </div>
+                            
+                            <div class="col-md-3" sec:authorize="hasRole('ADMIN')">
+                                <a th:href="@{/admin/}" class="btn btn-outline-danger w-100">
+                                    <i class="bi bi-gear"></i><br>
+                                    <small>Admin Panel</small>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">
+                <i class="bi bi-code-slash"></i> 
+                Spring Security 6 Demo with Spring Boot, JPA, H2 & Thymeleaf
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

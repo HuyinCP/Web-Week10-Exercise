@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderator Panel - Spring Security Demo</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        .moderator-card {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-warning">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/home}">
+                <i class="bi bi-shield-lock"></i> Spring Security Demo
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/moderator/}">
+                            <i class="bi bi-shield-check"></i> Moderator Panel
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            <span th:text="${user.username}">Moderator</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" th:href="@{/user/profile}">
+                                <i class="bi bi-person"></i> Profile
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/logout}">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- Moderator Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card moderator-card">
+                    <div class="card-body text-center">
+                        <h2 class="card-title mb-3">
+                            <i class="bi bi-shield-check"></i> Moderator Panel
+                        </h2>
+                        <p class="card-text mb-3">
+                            Welcome, <span th:text="${fullName}">Moderator User</span>! 
+                            You have moderator privileges to manage content and users.
+                        </p>
+                        <span class="badge bg-light text-dark">
+                            <i class="bi bi-shield-check"></i> ROLE_MODERATOR
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Moderator Features -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-file-earmark-check text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Content Moderation</h5>
+                        <p class="card-text">
+                            Review and moderate user-generated content, approve or reject submissions.
+                        </p>
+                        <a th:href="@{/moderator/content}" class="btn btn-primary">
+                            <i class="bi bi-file-earmark-check"></i> Moderate Content
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-people text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">User Management</h5>
+                        <p class="card-text">
+                            Monitor user activities and manage user accounts with limited permissions.
+                        </p>
+                        <button class="btn btn-success" disabled>
+                            <i class="bi bi-people"></i> Manage Users (Demo)
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <i class="bi bi-flag text-warning" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Reports & Flags</h5>
+                        <p class="card-text">
+                            Review reported content and user flags, take appropriate actions.
+                        </p>
+                        <button class="btn btn-warning" disabled>
+                            <i class="bi bi-flag"></i> Review Reports (Demo)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Moderator Information -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle"></i> Moderator Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Username:</strong></td>
+                                <td th:text="${user.username}">moderator</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email:</strong></td>
+                                <td th:text="${user.email}">moderator@example.com</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Full Name:</strong></td>
+                                <td th:text="${fullName}">Moderator User</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Role:</strong></td>
+                                <td><span class="badge bg-warning">MODERATOR</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-shield-check"></i> Moderator Privileges
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                Content moderation
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                User monitoring
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                Report handling
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success"></i>
+                                Limited user management
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-x-circle text-muted"></i>
+                                Full admin access
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">
+                <i class="bi bi-code-slash"></i> 
+                Spring Security 6 Demo with Spring Boot, JPA, H2 & Thymeleaf
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

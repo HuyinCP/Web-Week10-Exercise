@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Spring Security Demo</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/home}">
+                <i class="bi bi-shield-lock"></i> Spring Security Demo
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/home}">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/user/}">
+                            <i class="bi bi-person"></i> User Area
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            <span th:text="${user.username}">User</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item active" th:href="@{/user/profile}">
+                                <i class="bi bi-person"></i> Profile
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/logout}">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2>
+                            <i class="bi bi-person"></i> User Profile
+                        </h2>
+                        <p class="text-muted">View and manage your personal information</p>
+                    </div>
+                    <div>
+                        <a th:href="@{/user/}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to User Area
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Information -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="profile-avatar mb-3">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <h5 th:text="${fullName}">User Name</h5>
+                        <p class="text-muted" th:text="${user.email}">user@example.com</p>
+                        <span class="badge bg-success">ROLE_USER</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle"></i> Personal Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <td width="30%"><strong>Username:</strong></td>
+                                <td th:text="${user.username}">user</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email:</strong></td>
+                                <td th:text="${user.email}">user@example.com</td>
+                            </tr>
+                            <tr>
+                                <td><strong>First Name:</strong></td>
+                                <td th:text="${user.firstName}">John</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Last Name:</strong></td>
+                                <td th:text="${user.lastName}">Doe</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Account Status:</strong></td>
+                                <td>
+                                    <span th:if="${user.enabled}" class="badge bg-success">Active</span>
+                                    <span th:unless="${user.enabled}" class="badge bg-danger">Inactive</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>User ID:</strong></td>
+                                <td th:text="${user.id}">1</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Actions -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-gear"></i> Account Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <button class="btn btn-outline-primary w-100" disabled>
+                                    <i class="bi bi-pencil"></i><br>
+                                    <small>Edit Profile</small>
+                                </button>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <button class="btn btn-outline-warning w-100" disabled>
+                                    <i class="bi bi-key"></i><br>
+                                    <small>Change Password</small>
+                                </button>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <button class="btn btn-outline-info w-100" disabled>
+                                    <i class="bi bi-envelope"></i><br>
+                                    <small>Update Email</small>
+                                </button>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <button class="btn btn-outline-danger w-100" disabled>
+                                    <i class="bi bi-trash"></i><br>
+                                    <small>Delete Account</small>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle"></i>
+                                These features are disabled in the demo version.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">
+                <i class="bi bi-code-slash"></i> 
+                Spring Security 6 Demo with Spring Boot, JPA, H2 & Thymeleaf
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
