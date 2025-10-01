@@ -333,7 +333,9 @@ Dự án này được phân phối dưới MIT License. Xem file `LICENSE` đ�
 ## 👨‍💻 Tác giả
 
 **Spring Security Demo Team**
-- Email: demo@example.com
+- Name: Nghiêm Quang Huy
+- ID: 23110222
+- Email: huy211020055@gmail.com
 - GitHub: [@spring-security-demo](https://github.com/spring-security-demo)
 
 ---
